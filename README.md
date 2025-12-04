@@ -16,13 +16,18 @@ Smart contracts for XRail's facilitator payment infrastructure powered by the X-
 
 ### Deployed Addresses
 
-**Base Sepolia Testnet:**
-- Proxy: `0xe51E3Fd47aa2B70F1211D6614dBaF418Bf51D7D2`
-- Implementation: `0xb93a560Bfd0e0A550f756654b4ca3355B16Da736`
-- USDC: `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
-- Current Fee: `200` (0.0002 USDC per transaction)
+Deployed on **Sepolia** and **Base** networks:
 
-[View on BaseScan](https://sepolia.basescan.org/address/0xe51E3Fd47aa2B70F1211D6614dBaF418Bf51D7D2)
+| Contract | Address |
+|----------|---------|
+| Deployer | `0x460216e025231C89ff946f6BA24B7003CB88419F` |
+| Airdrop | `0x9C4d953cf049955B1122959DFCb7e8A994a83197` |
+| Facilitator Implementation | `0xE95FB33C09e20275740C311f3f4c259543c5D284` |
+| Facilitator Proxy | `0xb5fcF9c691E0043c71692b5aEc8352b541BbC65F` |
+
+**Network Links:**
+- Sepolia: [Etherscan](https://sepolia.etherscan.io/address/0xb5fcF9c691E0043c71692b5aEc8352b541BbC65F)
+- Base: [BaseScan](https://basescan.org/address/0xb5fcF9c691E0043c71692b5aEc8352b541BbC65F)
 
 ### Usage Flow
 
