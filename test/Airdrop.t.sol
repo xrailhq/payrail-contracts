@@ -47,11 +47,14 @@ contract AirdropTest is Test {
         // Deploy XRailFacilitator
         XRailFacilitator implementation = new XRailFacilitator();
         uint256 pricePerSettle = 10 ** 6; // 1 USDC
-        bytes memory initData = abi.encodeWithSelector(
-            XRailFacilitator.initialize.selector, address(usdc), facilitatorOwner, pricePerSettle
-        );
+        bytes memory initData =
+            abi.encodeWithSelector(XRailFacilitator.initialize.selector, facilitatorOwner, pricePerSettle);
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
         facilitator = XRailFacilitator(address(proxy));
+
+        // Set USDC address
+        vm.prank(facilitatorOwner);
+        facilitator.setUsdc(address(usdc));
 
         // Deploy Airdrop contract
         airdrop = new Airdrop(admin, airdropInitiator, address(facilitator), AIRDROP_AMOUNT);

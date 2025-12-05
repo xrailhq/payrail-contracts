@@ -106,17 +106,21 @@ contract XRailFacilitatorTest is Test {
 
         // Deploy proxy and initialize
         uint256 initialPrice = 10 ** 6; // 1 USDC (6 decimals)
-        bytes memory initData =
-            abi.encodeWithSelector(XRailFacilitator.initialize.selector, address(usdc), owner, initialPrice);
+        bytes memory initData = abi.encodeWithSelector(XRailFacilitator.initialize.selector, owner, initialPrice);
 
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), initData);
 
         facilitatorCredits = XRailFacilitator(address(proxy));
+
+        // Set USDC address
+        vm.prank(owner);
+        facilitatorCredits.setUsdc(address(usdc));
     }
 
     function test_PricePerSettle() public view {
         // Test pricePerSettle returns 1 credit (10^6)
-        assertEq(facilitatorCredits.pricePerSettle(), 10 ** 6, "Price per settle should be 1 credit (10^6)");
+        uint256 price = facilitatorCredits.pricePerSettle();
+        assertEq(price, 10 ** 6, "Price per settle should be 1 credit (10^6)");
     }
 
     function test_BuyCreditsViaSettle() public {
@@ -302,14 +306,17 @@ contract XRailFacilitatorTest is Test {
         // Deploy new implementation to test initialization
         XRailFacilitator newImplementation = new XRailFacilitator();
 
-        // Attempt to initialize with zero address for USDC
+        // Deploy proxy with valid initialization
         uint256 initialPrice = 10 ** 6; // 1 USDC (6 decimals)
-        bytes memory initData =
-            abi.encodeWithSelector(XRailFacilitator.initialize.selector, address(0), owner, initialPrice);
+        bytes memory initData = abi.encodeWithSelector(XRailFacilitator.initialize.selector, owner, initialPrice);
 
-        // Expect revert when deploying proxy with zero USDC address
+        ERC1967Proxy proxy = new ERC1967Proxy(address(newImplementation), initData);
+        XRailFacilitator newFacilitator = XRailFacilitator(address(proxy));
+
+        // Expect revert when setting USDC to zero address
+        vm.prank(owner);
         vm.expectRevert("Invalid USDC address");
-        new ERC1967Proxy(address(newImplementation), initData);
+        newFacilitator.setUsdc(address(0));
     }
 
     function test_Decimals() public view {
@@ -516,8 +523,7 @@ contract XRailFacilitatorTest is Test {
 
         // Deploy proxy WITHOUT calling AccessControl init (simulating old version)
         uint256 initialPrice = 10 ** 6;
-        bytes memory initData =
-            abi.encodeWithSelector(XRailFacilitator.initialize.selector, address(usdc), owner, initialPrice);
+        bytes memory initData = abi.encodeWithSelector(XRailFacilitator.initialize.selector, owner, initialPrice);
 
         ERC1967Proxy proxy = new ERC1967Proxy(address(newImplementation), initData);
         XRailFacilitator oldVersionProxy = XRailFacilitator(address(proxy));
@@ -535,8 +541,7 @@ contract XRailFacilitatorTest is Test {
         // Deploy a fresh proxy to test reinitializer properly
         XRailFacilitator newImplementation = new XRailFacilitator();
         uint256 initialPrice = 10 ** 6;
-        bytes memory initData =
-            abi.encodeWithSelector(XRailFacilitator.initialize.selector, address(usdc), owner, initialPrice);
+        bytes memory initData = abi.encodeWithSelector(XRailFacilitator.initialize.selector, owner, initialPrice);
 
         ERC1967Proxy proxy = new ERC1967Proxy(address(newImplementation), initData);
         XRailFacilitator newProxy = XRailFacilitator(address(proxy));
